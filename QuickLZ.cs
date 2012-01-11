@@ -5,12 +5,13 @@ namespace QuickLZ
 {
     public class QuickLZ
     {
+        // The C library passes many integers through the C type size_t which is 32 or 64 bits on 32 or 64 bit 
+        // systems respectively. The C# type IntPtr has the same property but because IntPtr doesn't allow 
+        // arithmetic we cast to and from int on each reference. To pass constants use (IntPrt)1234.
         private const string DllLocation = "quicklz150.dll";
-        
 
         private readonly byte[] _stateCompress;
         private readonly byte[] _stateDecompress;
-
 
         public QuickLZ()
         {

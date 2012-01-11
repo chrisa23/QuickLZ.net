@@ -63,6 +63,7 @@
     <Compile Include="QuickLZ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickLZCompressionStream.cs" />
+    <Compile Include="QuickLZcs.cs" />
     <Compile Include="QuickLZDecompressionStream.cs" />
     <Compile Include="ResourceExtractor.cs" />
   </ItemGroup>
