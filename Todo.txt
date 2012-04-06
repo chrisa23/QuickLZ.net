@@ -1,4 +1,4 @@
-- embed all compression options 
 - add unit tests
 - clean up code and documentation
 - create nuget package
+- embed all compression options 
