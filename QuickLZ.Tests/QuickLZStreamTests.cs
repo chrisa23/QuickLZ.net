@@ -9,7 +9,8 @@
     [TestFixture]
     public class QuickLZStreamTests
     {
-        private Task _factory;
+        private static readonly TaskFactory Factory = new TaskFactory(TaskCreationOptions.LongRunning,
+            TaskContinuationOptions.LongRunning);
 
         [Test]
         public void GeneralCompressDecompressTest()
@@ -21,11 +22,8 @@
 
         private static void RunGeneralTest(int level)
         {
-            //create a stream and pass it through compress and decompress
-            //assert it is unchanged//
             byte[] original = File.ReadAllBytes("./Flower.bmp");
-            byte[] compressedBytes; // = new byte[sizeCompressed];
-            byte[] result;
+            byte[] compressedBytes;
             using (var compressed = new MemoryStream())
             {
                 using (var lz = new QuickLZStream(compressed, CompressionMode.Compress, level))
@@ -34,7 +32,7 @@
                 }
                 compressedBytes = compressed.ToArray();
             }
-            result = new byte[original.Length];
+            var result = new byte[original.Length];
             using (var compressed = new MemoryStream(compressedBytes))
             {
                 using (var lzd = new QuickLZStream(compressed, CompressionMode.Decompress, level))
@@ -58,10 +56,8 @@
 
         private static void RunParallelTest(int level)
         {
-            //create a stream and pass it through compress and decompress
-            //assert it is unchanged//
             byte[] original = File.ReadAllBytes("./Flower.bmp");
-            byte[] compressedBytes; // = new byte[sizeCompressed];
+            byte[] compressedBytes;
             using (var compressed = new MemoryStream())
             {
                 using (var lz = new QuickLZStream(compressed, CompressionMode.Compress, level))
@@ -70,11 +66,10 @@
                 }
                 compressedBytes = compressed.ToArray();
             }
-            var factory = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.LongRunning);
             var tasks = new List<Task>();
             for (int j = 0; j < 4; j++)
             {
-                Task task = factory.StartNew(() =>
+                Task task = Factory.StartNew(() =>
                 {
                     var result = new byte[original.Length];
                     for (int k = 0; k < 100; k++)

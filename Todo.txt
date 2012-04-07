@@ -1,4 +1,2 @@
-- clean up code and documentation
 - create nuget package
-- embed all compression options (?)
-   (currently have all levels for streaming/nonstreaming dlls, no safe)
+- embed safe option (?)

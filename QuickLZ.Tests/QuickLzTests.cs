@@ -16,8 +16,6 @@
 
         private static void RunGeneralTest(int level)
         {
-            //create a stream and pass it through compress and decompress
-            //assert it is unchanged//
             byte[] original = File.ReadAllBytes("./Flower.bmp");
             var qlz = new QuickLZ(level);
             int sizeC = qlz.SizeCompressed(original);

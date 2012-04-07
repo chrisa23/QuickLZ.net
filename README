@@ -2,4 +2,4 @@ QuickLZ is a fast compression library (www.quicklz.com).
 
 QuickLZ.net is a QuickLZ wrapper for .Net.  Based on code from www.quicklz.com.  
 
-Provides automatic 32bit/64bit support and streaming compression with 3 levels.  
+Provides automatic 32bit/64bit support, three levels, and streaming mode.  The appropriate native dll is extracted locally.  Does not support memory safe mode currently.

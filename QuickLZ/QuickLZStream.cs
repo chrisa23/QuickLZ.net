@@ -9,13 +9,14 @@
     {
         private readonly QuickLZ _quickLZ;
         private readonly Stream _stream;
-        //read
+        private readonly CompressionMode _compressionMode;
+        //decompress
         private readonly byte[] _header = new byte[9];
         private byte[] _readBuffer;
         private byte[] _unpackedBuffer;
         private int _unpackedLength;
         private int _unpackedOffset;
-        //write
+        //compress
         private readonly byte[] _compressedBuffer;
         private readonly byte[] _writeBuffer;
         private int _writeBufferOffset;
@@ -29,7 +30,7 @@
         {
             _quickLZ = new QuickLZ(level, true);
             _stream = stream;
-            CompressionMode = mode;
+            _compressionMode = mode;
             switch (mode)
             {
                 case CompressionMode.Decompress:
@@ -44,23 +45,21 @@
             }
         }
 
-        /// <summary>   Gets the compression level (1-3). </summary>
-        public int Level
-        {
-            get
-            {
-                return _quickLZ.CompressionLevel;
-            }
-        }
-        /// <summary>   Gets the compression mode. </summary>
-        public CompressionMode CompressionMode { get; private set; }
+        /// <summary>
+        ///     Gets a value indicating whether the current stream supports reading.
+        /// </summary>
+        /// <value> true if we can read, false if not. </value>
         public override bool CanRead
         {
             get
             {
-                return CompressionMode == CompressionMode.Decompress;
+                return _compressionMode == CompressionMode.Decompress;
             }
         }
+        /// <summary>
+        ///     Gets a value indicating whether the current stream supports seeking.
+        /// </summary>
+        /// <value> true if we can seek, false if not. </value>
         public override bool CanSeek
         {
             get
@@ -68,13 +67,20 @@
                 return false;
             }
         }
+        /// <summary>
+        ///     Gets a value indicating whether the current stream supports writing.
+        /// </summary>
+        /// <value> true if we can write, false if not. </value>
         public override bool CanWrite
         {
             get
             {
-                return CompressionMode == CompressionMode.Compress;
+                return _compressionMode == CompressionMode.Compress;
             }
         }
+        /// <summary>
+        ///     Stream does not support Length.
+        /// </summary>
         public override long Length
         {
             get
@@ -82,6 +88,9 @@
                 throw new NotSupportedException();
             }
         }
+        /// <summary>
+        ///     Stream does not support Position .
+        /// </summary>
         public override long Position
         {
             get
@@ -94,16 +103,26 @@
             }
         }
 
+        /// <summary>
+        ///     Stream does not support SetLength .
+        /// </summary>
         public override void SetLength(long value)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        ///     Stream does not support seeking.
+        /// </summary>
         public override long Seek(long offset, SeekOrigin origin)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        ///     Clears all buffers for this stream and causes any
+        ///     buffered data to be written to the underlying device.
+        /// </summary>
         public override void Flush()
         {
             if (_writeBufferOffset > 0)
@@ -114,6 +133,15 @@
             }
         }
 
+        /// <summary>
+        ///     Writes a sequence of bytes to the current stream and
+        ///     advances the current position within this stream by the number of bytes written.
+        /// </summary>
+        /// <param name="buffer">   An array of bytes. This method copies <paramref name="count" /> bytes
+        ///                         from <paramref name="buffer" /> to the current stream. </param>
+        /// <param name="offset">   The zero-based byte offset in <paramref name="buffer" /> at which to
+        ///                         begin copying bytes to the current stream. </param>
+        /// <param name="count">    The number of bytes to be written to the current stream. </param>
         public override void Write(byte[] buffer, int offset, int count)
         {
             // we have 3 options here:
@@ -187,6 +215,23 @@
             _unpackedOffset = 0;
         }
 
+        /// <summary>
+        ///     Reads a sequence of bytes from the current stream and
+        ///     advances the position within the stream by the number of bytes read.
+        /// </summary>
+        /// <param name="buffer">   An array of bytes. When this method returns, the buffer contains the
+        ///                         specified byte array with the values between
+        ///                         <paramref name="offset" /> and (<paramref name="offset" /> +
+        ///                         <paramref name="count" /> - 1) replaced by the bytes read from the
+        ///                         current source. </param>
+        /// <param name="offset">   The zero-based byte offset in <paramref name="buffer" /> at which to
+        ///                         begin storing the data read from the current stream. </param>
+        /// <param name="count">    The maximum number of bytes to be read from the current stream. </param>
+        /// <returns>
+        ///     The total number of bytes read into the buffer. This can be less than the number of bytes
+        ///     requested if that many bytes are not currently available, or zero (0) if the end of the
+        ///     stream has been reached.
+        /// </returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (_unpackedBuffer == null || _unpackedOffset == _unpackedLength)
@@ -216,7 +261,7 @@
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && CompressionMode == CompressionMode.Compress)
+            if (disposing && _compressionMode == CompressionMode.Compress)
             {
                 Flush();
             }
