@@ -27,19 +27,19 @@ namespace QuickLZ
         [DllImport(DllLocation)]
         private static extern int qlz_get_setting(int setting);
 
-        uint IQuickLZDll.Decompress(byte[] source, byte[] destination, byte[] scratch)
+        int IQuickLZDll.Decompress(byte[] source, byte[] destination, byte[] scratch)
         {
-            return (uint)qlz_decompress(source, destination, scratch);
+            return qlz_decompress(source, destination, scratch).ToInt32();
         }
 
-        uint IQuickLZDll.SizeCompressed(byte[] source)
+        int IQuickLZDll.SizeCompressed(byte[] source)
         {
-            return (uint)qlz_size_compressed(source);
+            return qlz_size_compressed(source).ToInt32();
         }
 
-        uint IQuickLZDll.SizeDecompressed(byte[] source)
+        int IQuickLZDll.SizeDecompressed(byte[] source)
         {
-            return (uint)qlz_size_decompressed(source);
+            return qlz_size_decompressed(source).ToInt32();
         }
 
         int IQuickLZDll.GetSetting(int setting)
@@ -47,9 +47,9 @@ namespace QuickLZ
             return qlz_get_setting(setting);
         }
 
-        uint IQuickLZDll.Compress(byte[] source, byte[] destination, IntPtr size, byte[] scratch)
+        int IQuickLZDll.Compress(byte[] source, byte[] destination, IntPtr size, byte[] scratch)
         {
-            return (uint)qlz_compress(source, destination, size, scratch);
+            return qlz_compress(source, destination, size, scratch).ToInt32();
         }
     }
 }

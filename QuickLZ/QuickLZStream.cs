@@ -30,7 +30,6 @@
             _quickLZ = new QuickLZ(level, true);
             _stream = stream;
             CompressionMode = mode;
-            Level = level;
             switch (mode)
             {
                 case CompressionMode.Decompress:
@@ -46,7 +45,13 @@
         }
 
         /// <summary>   Gets the compression level (1-3). </summary>
-        public int Level { get; private set; }
+        public int Level
+        {
+            get
+            {
+                return _quickLZ.CompressionLevel;
+            }
+        }
         /// <summary>   Gets the compression mode. </summary>
         public CompressionMode CompressionMode { get; private set; }
         public override bool CanRead
@@ -141,6 +146,7 @@
         private void EnsureUnpackedBuffer(byte[] packedBuffer)
         {
             int unpackedLength = _quickLZ.SizeDecompressed(packedBuffer);
+            //tries to reuse a buffer if possible
             if (_unpackedBuffer == null || _unpackedBuffer.Length < unpackedLength)
             {
                 _unpackedBuffer = new byte[unpackedLength];
