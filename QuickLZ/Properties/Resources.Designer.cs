@@ -60,9 +60,23 @@ namespace QuickLZ.Properties {
             }
         }
         
+        public static byte[] quicklz150_32_1 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_32_1", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         public static byte[] quicklz150_32_1_1000000 {
             get {
                 object obj = ResourceManager.GetObject("quicklz150_32_1_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_32_2 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_32_2", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -74,9 +88,23 @@ namespace QuickLZ.Properties {
             }
         }
         
+        public static byte[] quicklz150_32_3 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_32_3", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         public static byte[] quicklz150_32_3_1000000 {
             get {
                 object obj = ResourceManager.GetObject("quicklz150_32_3_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_64_1 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_64_1", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -88,9 +116,23 @@ namespace QuickLZ.Properties {
             }
         }
         
+        public static byte[] quicklz150_64_2 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_64_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         public static byte[] quicklz150_64_2_1000000 {
             get {
                 object obj = ResourceManager.GetObject("quicklz150_64_2_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_64_3 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_64_3", resourceCulture);
                 return ((byte[])(obj));
             }
         }

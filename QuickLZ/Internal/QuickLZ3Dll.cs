@@ -3,14 +3,14 @@ namespace QuickLZ
     using System;
     using System.Runtime.InteropServices;
 
-    internal sealed class QuickLZ2Dll : IQuickLZDll
+    internal sealed class QuickLZ3Dll : IQuickLZDll
     {
-        public QuickLZ2Dll()
+        public QuickLZ3Dll()
         {
-            ResourceExtractor.ExtractResourceToFile(2, "quicklz150_2.dll");
+            ResourceExtractor.ExtractResourceToFile(3, false, "quicklz150_3.dll");
         }
 
-        private const string DllLocation = "quicklz150_2.dll";
+        private const string DllLocation = "quicklz150_3.dll";
 
         [DllImport(DllLocation)]
         private static extern IntPtr qlz_compress(byte[] source, byte[] destination, IntPtr size, byte[] scratch);

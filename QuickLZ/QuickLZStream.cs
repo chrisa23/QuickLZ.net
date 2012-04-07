@@ -27,7 +27,7 @@
         /// <param name="bufferSize">   (optional) size of the buffer. </param>
         public QuickLZStream(Stream stream, CompressionMode mode, int level, int bufferSize = 1 << 20)
         {
-            _quickLZ = new QuickLZ(level);
+            _quickLZ = new QuickLZ(level, true);
             _stream = stream;
             CompressionMode = mode;
             Level = level;
@@ -103,7 +103,7 @@
         {
             if (_writeBufferOffset > 0)
             {
-                var compressedLength = (int)_quickLZ.Compress(_writeBuffer, _compressedBuffer, _writeBufferOffset);
+                int compressedLength = _quickLZ.Compress(_writeBuffer, _compressedBuffer, _writeBufferOffset);
                 _stream.Write(_compressedBuffer, 0, compressedLength);
                 _writeBufferOffset = 0;
             }
@@ -140,7 +140,7 @@
 
         private void EnsureUnpackedBuffer(byte[] packedBuffer)
         {
-            var unpackedLength = (int)_quickLZ.SizeDecompressed(packedBuffer);
+            int unpackedLength = _quickLZ.SizeDecompressed(packedBuffer);
             if (_unpackedBuffer == null || _unpackedBuffer.Length < unpackedLength)
             {
                 _unpackedBuffer = new byte[unpackedLength];
@@ -160,7 +160,7 @@
             {
                 throw new InvalidDataException("QuickLZ input buffer corrupted (header)");
             }
-            var sizeCompressed = (int)_quickLZ.SizeCompressed(_header);
+            int sizeCompressed = _quickLZ.SizeCompressed(_header);
             if (sizeCompressed == 0)
             {
                 _unpackedBuffer = null;
@@ -177,7 +177,7 @@
                 throw new InvalidDataException("QuickLZ input buffer corrupted (body)");
             }
             EnsureUnpackedBuffer(_readBuffer);
-            _unpackedLength = (int)_quickLZ.Decompress(_readBuffer, _unpackedBuffer);
+            _unpackedLength = _quickLZ.Decompress(_readBuffer, _unpackedBuffer);
             _unpackedOffset = 0;
         }
 

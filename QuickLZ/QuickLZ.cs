@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal sealed class QuickLZ
+    public sealed class QuickLZ
     {
         // The C library passes many integers through the C type size_t which is 32 or 64 bits on 32 or 64 bit 
         // systems respectively. The C# type IntPtr has the same property but because IntPtr doesn't allow 
@@ -11,15 +11,29 @@
         private readonly byte[] _stateDecompress;
         private readonly IQuickLZDll _dll;
 
-        public QuickLZ(int level)
+        public QuickLZ(int level, bool stream = false)
         {
-            _dll = GetDLL(level);
+            _dll = GetDLL(level, stream);
             _stateCompress = new byte[_dll.GetSetting(1)];
-            _stateDecompress = QLZ_STREAMING_BUFFER == 0 ? _stateCompress : new byte[_dll.GetSetting(2)];
+            _stateDecompress = StreamingBuffer ? new byte[_dll.GetSetting(2)] : _stateCompress;
         }
 
-        private IQuickLZDll GetDLL(int level)
+        private IQuickLZDll GetDLL(int level, bool stream)
         {
+            if (stream)
+            {
+                switch (level)
+                {
+                    case 1:
+                        return new QuickLZ1SDll();
+                    case 2:
+                        return new QuickLZ2SDll();
+                    case 3:
+                        return new QuickLZ3SDll();
+                    default:
+                        return new QuickLZ1SDll();
+                }
+            }
             switch (level)
             {
                 case 1:
@@ -33,42 +47,42 @@
             }
         }
 
-        public int QLZ_COMPRESSION_LEVEL
+        public int CompressionLevel
         {
             get
             {
                 return _dll.GetSetting(0);
             }
         }
-        public uint QLZ_SCRATCH_COMPRESS
+        public int ScratchCompress
         {
             get
             {
-                return (uint)_dll.GetSetting(1);
+                return _dll.GetSetting(1);
             }
         }
-        public uint QLZ_SCRATCH_DECOMPRESS
+        public int ScratchDecompress
         {
             get
             {
-                return (uint)_dll.GetSetting(2);
+                return _dll.GetSetting(2);
             }
         }
-        public int QLZ_VERSION_MAJOR
+        public int VersionMajor
         {
             get
             {
                 return _dll.GetSetting(7);
             }
         }
-        public int QLZ_VERSION_MINOR
+        public int VersionMinor
         {
             get
             {
                 return _dll.GetSetting(8);
             }
         }
-        public int QLZ_VERSION_REVISION
+        public int VersionRevision
         {
             // negative means beta
             get
@@ -76,41 +90,41 @@
                 return _dll.GetSetting(9);
             }
         }
-        public uint QLZ_STREAMING_BUFFER
+        public bool StreamingBuffer
         {
             get
             {
-                return (uint)_dll.GetSetting(3);
+                return _dll.GetSetting(3) == 1;
             }
         }
-        public bool QLZ_MEMORY_SAFE
+        public bool MemorySafe
         {
             get
             {
-                return _dll.GetSetting(6) == 1 ? true : false;
+                return _dll.GetSetting(6) == 1;
             }
         }
 
-        public uint Compress(byte[] source, byte[] dest, int size)
+        public int Compress(byte[] source, byte[] dest, int size)
         {
             uint s = _dll.Compress(source, dest, (IntPtr)size, _stateCompress);
-            return s;
+            return (int)s;
         }
 
-        public uint Decompress(byte[] source, byte[] dest)
+        public int Decompress(byte[] source, byte[] dest)
         {
             uint s = _dll.Decompress(source, dest, _stateDecompress);
-            return s;
+            return (int)s;
         }
 
-        public uint SizeCompressed(byte[] source)
+        public int SizeCompressed(byte[] source)
         {
-            return _dll.SizeCompressed(source);
+            return (int)_dll.SizeCompressed(source);
         }
 
-        public uint SizeDecompressed(byte[] source)
+        public int SizeDecompressed(byte[] source)
         {
-            return _dll.SizeDecompressed(source);
+            return (int)_dll.SizeDecompressed(source);
         }
     }
 }

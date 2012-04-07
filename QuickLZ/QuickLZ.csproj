@@ -54,7 +54,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IQuickLZDll.cs" />
+    <Compile Include="Internal\QuickLZ1Dll.cs" />
+    <Compile Include="Internal\QuickLZ2Dll.cs" />
+    <Compile Include="Internal\QuickLZ3Dll.cs" />
+    <Compile Include="Internal\IQuickLZDll.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -62,16 +65,11 @@
     </Compile>
     <Compile Include="QuickLZ.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuickLZ1Dll.cs" />
-    <Compile Include="QuickLZ2Dll.cs" />
-    <Compile Include="QuickLZ3Dll.cs" />
+    <Compile Include="Internal\QuickLZ1SDll.cs" />
+    <Compile Include="Internal\QuickLZ2SDll.cs" />
+    <Compile Include="Internal\QuickLZ3SDll.cs" />
     <Compile Include="QuickLZStream.cs" />
-    <Compile Include="ResourceExtractor.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="linux.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Compile Include="Internal\ResourceExtractor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -82,26 +80,44 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\32\quicklz150_32_1_1000000.dll">
-      <Link>quicklz150_32_1_1000000.dll</Link>
+      <Link>Internal\quicklz150_32_1_1000000.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\64\quicklz150_64_1_1000000.dll">
-      <Link>quicklz150_64_1_1000000.dll</Link>
+      <Link>Internal\quicklz150_64_1_1000000.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\32\quicklz150_32_1.dll">
+      <Link>Internal\quicklz150_32_1.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\32\quicklz150_32_2.dll">
+      <Link>Internal\quicklz150_32_2.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\32\quicklz150_32_2_1000000.dll">
-      <Link>quicklz150_32_2_1000000.dll</Link>
+      <Link>Internal\quicklz150_32_2_1000000.dll</Link>
     </Content>
+    <EmbeddedResource Include="..\32\quicklz150_32_3.dll">
+      <Link>Internal\quicklz150_32_3.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\32\quicklz150_32_3_1000000.dll">
-      <Link>quicklz150_32_3_1000000.dll</Link>
+      <Link>Internal\quicklz150_32_3_1000000.dll</Link>
     </Content>
+    <EmbeddedResource Include="..\64\quicklz150_64_1.dll">
+      <Link>Internal\quicklz150_64_1.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\64\quicklz150_64_2.dll">
+      <Link>Internal\quicklz150_64_2.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\64\quicklz150_64_2_1000000.dll">
-      <Link>quicklz150_64_2_1000000.dll</Link>
+      <Link>Internal\quicklz150_64_2_1000000.dll</Link>
     </Content>
+    <EmbeddedResource Include="..\64\quicklz150_64_3.dll">
+      <Link>Internal\quicklz150_64_3.dll</Link>
+    </EmbeddedResource>
     <Content Include="..\64\quicklz150_64_3_1000000.dll">
-      <Link>quicklz150_64_3_1000000.dll</Link>
+      <Link>Internal\quicklz150_64_3_1000000.dll</Link>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
