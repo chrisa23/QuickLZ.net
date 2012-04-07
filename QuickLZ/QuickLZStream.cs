@@ -31,17 +31,14 @@
             _quickLZ = new QuickLZ(level, true);
             _stream = stream;
             _compressionMode = mode;
-            switch (mode)
+            if (mode == CompressionMode.Decompress)
             {
-                case CompressionMode.Decompress:
-                    Fill();
-                    break;
-                case CompressionMode.Compress:
-                    _writeBuffer = new byte[bufferSize];
-                    _compressedBuffer = new byte[bufferSize + 400];
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("mode");
+                Fill();
+            }
+            else
+            {
+                _writeBuffer = new byte[bufferSize];
+                _compressedBuffer = new byte[bufferSize + 400];
             }
         }
 

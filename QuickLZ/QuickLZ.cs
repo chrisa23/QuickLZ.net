@@ -14,12 +14,12 @@
         /// <param name="stream">   (optional) Use streaming mode </param>
         public QuickLZ(int level, bool stream = false)
         {
-            _dll = GetDLL(level, stream);
+            _dll = GetDll(level, stream);
             _stateCompress = new byte[_dll.GetSetting(1)];
             _stateDecompress = Streaming ? new byte[_dll.GetSetting(2)] : _stateCompress;
         }
 
-        private IQuickLZDll GetDLL(int level, bool stream)
+        private static IQuickLZDll GetDll(int level, bool stream)
         {
             if (stream)
             {
@@ -86,7 +86,7 @@
         {
             get
             {
-                return _dll.GetSetting(3) == 1;
+                return _dll.GetSetting(3) > 0;
             }
         }
         /// <summary>   Gets a value indicating whether the memory safe option is on. </summary>
