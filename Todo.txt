@@ -1,4 +1,4 @@
-- add unit tests
 - clean up code and documentation
 - create nuget package
-- embed all compression options 
+- embed all compression options (?)
+   (currently have all levels for streaming dlls, no safe)

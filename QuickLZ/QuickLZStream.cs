@@ -2,29 +2,58 @@
 {
     using System;
     using System.IO;
+    using System.IO.Compression;
 
-    public sealed class QuickLZDecompressionStream : Stream
+    /// <summary>  Provides methods and properties used to compress and decompress streams using QuickLZ. </summary>
+    public sealed class QuickLZStream : Stream
     {
-        private readonly byte[] _header = new byte[9];
         private readonly QuickLZ _quickLZ;
-        private readonly Stream _sourceStream;
+        private readonly Stream _stream;
+        //read
+        private readonly byte[] _header = new byte[9];
         private byte[] _readBuffer;
         private byte[] _unpackedBuffer;
         private int _unpackedLength;
         private int _unpackedOffset;
+        //write
+        private readonly byte[] _compressedBuffer;
+        private readonly byte[] _writeBuffer;
+        private int _writeBufferOffset;
 
-        public QuickLZDecompressionStream(Stream sourceStream)
+        /// <summary>   Initializes a new instance of the QuickLZStream class. </summary> 
+        /// <param name="stream"> Stream to compress or decompress. </param>
+        /// <param name="mode">   The compression mode. </param>
+        /// <param name="level">  The compression level (1-3). </param>
+        /// <param name="bufferSize">   (optional) size of the buffer. </param>
+        public QuickLZStream(Stream stream, CompressionMode mode, int level, int bufferSize = 1 << 20)
         {
-            _quickLZ = new QuickLZ();
-            _sourceStream = sourceStream;
-            Fill();
+            _quickLZ = new QuickLZ(level);
+            _stream = stream;
+            CompressionMode = mode;
+            Level = level;
+            switch (mode)
+            {
+                case CompressionMode.Decompress:
+                    Fill();
+                    break;
+                case CompressionMode.Compress:
+                    _writeBuffer = new byte[bufferSize];
+                    _compressedBuffer = new byte[bufferSize + 400];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("mode");
+            }
         }
 
+        /// <summary>   Gets the compression level (1-3). </summary>
+        public int Level { get; private set; }
+        /// <summary>   Gets the compression mode. </summary>
+        public CompressionMode CompressionMode { get; private set; }
         public override bool CanRead
         {
             get
             {
-                return true;
+                return CompressionMode == CompressionMode.Decompress;
             }
         }
         public override bool CanSeek
@@ -38,7 +67,7 @@
         {
             get
             {
-                return false;
+                return CompressionMode == CompressionMode.Compress;
             }
         }
         public override long Length
@@ -60,8 +89,9 @@
             }
         }
 
-        public override void Flush()
+        public override void SetLength(long value)
         {
+            throw new NotSupportedException();
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -69,14 +99,43 @@
             throw new NotSupportedException();
         }
 
-        public override void SetLength(long value)
+        public override void Flush()
         {
-            throw new NotSupportedException();
+            if (_writeBufferOffset > 0)
+            {
+                var compressedLength = (int)_quickLZ.Compress(_writeBuffer, _compressedBuffer, _writeBufferOffset);
+                _stream.Write(_compressedBuffer, 0, compressedLength);
+                _writeBufferOffset = 0;
+            }
         }
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new NotSupportedException();
+            // we have 3 options here:
+            // buffer can still be filled --> we fill
+            // buffer is full --> we flush
+            // buffer is overflood --> we flush and refill
+            // 1. there is enough room, the buffer is not full
+            int writeLength = _writeBufferOffset + count;
+            if (writeLength <= _writeBuffer.Length)
+            {
+                Buffer.BlockCopy(buffer, offset, _writeBuffer, _writeBufferOffset, count);
+                _writeBufferOffset += count;
+                // 2. same size: write
+                if (_writeBufferOffset == _writeBuffer.Length)
+                {
+                    Flush();
+                }
+            }
+                // 3. buffer overflow: we split
+            else
+            {
+                int lengthToCauseFlush = _writeBuffer.Length - _writeBufferOffset;
+                // this first Write will cause a flush
+                Write(buffer, offset, lengthToCauseFlush);
+                // this one will refill
+                Write(buffer, offset + lengthToCauseFlush, count - lengthToCauseFlush);
+            }
         }
 
         private void EnsureUnpackedBuffer(byte[] packedBuffer)
@@ -90,7 +149,7 @@
 
         private void Fill()
         {
-            int headerLength = _sourceStream.Read(_header, 0, _header.Length);
+            int headerLength = _stream.Read(_header, 0, _header.Length);
             // the normal end is here
             if (headerLength == 0)
             {
@@ -112,7 +171,7 @@
                 _readBuffer = new byte[sizeCompressed];
             }
             Buffer.BlockCopy(_header, 0, _readBuffer, 0, _header.Length);
-            int bodyLength = _sourceStream.Read(_readBuffer, _header.Length, sizeCompressed - _header.Length);
+            int bodyLength = _stream.Read(_readBuffer, _header.Length, sizeCompressed - _header.Length);
             if (bodyLength != sizeCompressed - _header.Length)
             {
                 throw new InvalidDataException("QuickLZ input buffer corrupted (body)");
@@ -151,8 +210,12 @@
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing && CompressionMode == CompressionMode.Compress)
+            {
+                Flush();
+            }
             base.Dispose(disposing);
-            _sourceStream.Dispose();
+            _stream.Dispose();
         }
     }
 }

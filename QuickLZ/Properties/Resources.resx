@@ -121,7 +121,19 @@
   <data name="quicklz150_32_1_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\32\quicklz150_32_1_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="quicklz150_32_2_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\32\quicklz150_32_2_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="quicklz150_32_3_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\32\quicklz150_32_3_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="quicklz150_64_1_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\64\quicklz150_64_1_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="quicklz150_64_2_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\64\quicklz150_64_2_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="quicklz150_64_3_1000000" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\64\quicklz150_64_3_1000000.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

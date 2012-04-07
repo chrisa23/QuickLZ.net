@@ -67,9 +67,37 @@ namespace QuickLZ.Properties {
             }
         }
         
+        public static byte[] quicklz150_32_2_1000000 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_32_2_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_32_3_1000000 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_32_3_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
         public static byte[] quicklz150_64_1_1000000 {
             get {
                 object obj = ResourceManager.GetObject("quicklz150_64_1_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_64_2_1000000 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_64_2_1000000", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        public static byte[] quicklz150_64_3_1000000 {
+            get {
+                object obj = ResourceManager.GetObject("quicklz150_64_3_1000000", resourceCulture);
                 return ((byte[])(obj));
             }
         }

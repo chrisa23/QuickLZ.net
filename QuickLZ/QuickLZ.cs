@@ -1,57 +1,71 @@
 ﻿namespace QuickLZ
 {
     using System;
-    using System.Runtime.InteropServices;
 
-    public class QuickLZ
+    internal sealed class QuickLZ
     {
         // The C library passes many integers through the C type size_t which is 32 or 64 bits on 32 or 64 bit 
         // systems respectively. The C# type IntPtr has the same property but because IntPtr doesn't allow 
         // arithmetic we cast to and from int on each reference. To pass constants use (IntPrt)1234.
-        private const string DllLocation = "quicklz150.dll";
         private readonly byte[] _stateCompress;
         private readonly byte[] _stateDecompress;
+        private readonly IQuickLZDll _dll;
 
-        public QuickLZ()
+        public QuickLZ(int level)
         {
-            ResourceExtractor.ExtractResourceToFile(Environment.Is64BitProcess, "quicklz150.dll");
-            _stateCompress = new byte[qlz_get_setting(1)];
-            _stateDecompress = QLZ_STREAMING_BUFFER == 0 ? _stateCompress : new byte[qlz_get_setting(2)];
+            _dll = GetDLL(level);
+            _stateCompress = new byte[_dll.GetSetting(1)];
+            _stateDecompress = QLZ_STREAMING_BUFFER == 0 ? _stateCompress : new byte[_dll.GetSetting(2)];
         }
 
-        public uint QLZ_COMPRESSION_LEVEL
+        private IQuickLZDll GetDLL(int level)
+        {
+            switch (level)
+            {
+                case 1:
+                    return new QuickLZ1Dll();
+                case 2:
+                    return new QuickLZ2Dll();
+                case 3:
+                    return new QuickLZ3Dll();
+                default:
+                    return new QuickLZ1Dll();
+            }
+        }
+
+        public int QLZ_COMPRESSION_LEVEL
         {
             get
             {
-                return (uint)qlz_get_setting(0);
+                return _dll.GetSetting(0);
             }
         }
         public uint QLZ_SCRATCH_COMPRESS
         {
             get
             {
-                return (uint)qlz_get_setting(1);
+                return (uint)_dll.GetSetting(1);
             }
         }
         public uint QLZ_SCRATCH_DECOMPRESS
         {
             get
             {
-                return (uint)qlz_get_setting(2);
+                return (uint)_dll.GetSetting(2);
             }
         }
-        public uint QLZ_VERSION_MAJOR
+        public int QLZ_VERSION_MAJOR
         {
             get
             {
-                return (uint)qlz_get_setting(7);
+                return _dll.GetSetting(7);
             }
         }
-        public uint QLZ_VERSION_MINOR
+        public int QLZ_VERSION_MINOR
         {
             get
             {
-                return (uint)qlz_get_setting(8);
+                return _dll.GetSetting(8);
             }
         }
         public int QLZ_VERSION_REVISION
@@ -59,59 +73,44 @@
             // negative means beta
             get
             {
-                return qlz_get_setting(9);
+                return _dll.GetSetting(9);
             }
         }
         public uint QLZ_STREAMING_BUFFER
         {
             get
             {
-                return (uint)qlz_get_setting(3);
+                return (uint)_dll.GetSetting(3);
             }
         }
         public bool QLZ_MEMORY_SAFE
         {
             get
             {
-                return qlz_get_setting(6) == 1 ? true : false;
+                return _dll.GetSetting(6) == 1 ? true : false;
             }
         }
 
-        [DllImport(DllLocation)]
-        private static extern IntPtr qlz_compress(byte[] source, byte[] destination, IntPtr size, byte[] scratch);
-
-        [DllImport(DllLocation)]
-        private static extern IntPtr qlz_decompress(byte[] source, byte[] destination, byte[] scratch);
-
-        [DllImport(DllLocation)]
-        private static extern IntPtr qlz_size_compressed(byte[] source);
-
-        [DllImport(DllLocation)]
-        private static extern IntPtr qlz_size_decompressed(byte[] source);
-
-        [DllImport(DllLocation)]
-        private static extern int qlz_get_setting(int setting);
-
         public uint Compress(byte[] source, byte[] dest, int size)
         {
-            var s = (uint)qlz_compress(source, dest, (IntPtr)size, _stateCompress);
+            uint s = _dll.Compress(source, dest, (IntPtr)size, _stateCompress);
             return s;
         }
 
         public uint Decompress(byte[] source, byte[] dest)
         {
-            var s = (uint)qlz_decompress(source, dest, _stateDecompress);
+            uint s = _dll.Decompress(source, dest, _stateDecompress);
             return s;
         }
 
         public uint SizeCompressed(byte[] source)
         {
-            return (uint)qlz_size_compressed(source);
+            return _dll.SizeCompressed(source);
         }
 
         public uint SizeDecompressed(byte[] source)
         {
-            return (uint)qlz_size_decompressed(source);
+            return _dll.SizeDecompressed(source);
         }
     }
 }

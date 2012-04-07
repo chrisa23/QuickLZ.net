@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.IO.Compression;
     using System.Threading.Tasks;
     using NUnit.Framework;
 
@@ -11,9 +12,15 @@
         private Task _factory;
 
         [Test]
-        public void Test1()
+        public void GeneralCompressDecompressTest()
         {
-            var qlz = new QuickLZ();
+            RunGeneralTest(1);
+            RunGeneralTest(2);
+            RunGeneralTest(3);
+        }
+
+        private static void RunGeneralTest(int level)
+        {
             //create a stream and pass it through compress and decompress
             //assert it is unchanged//
             byte[] original = File.ReadAllBytes("./Flower.bmp");
@@ -21,7 +28,7 @@
             byte[] result;
             using (var compressed = new MemoryStream())
             {
-                using (var lz = new QuickLZCompressionStream(compressed))
+                using (var lz = new QuickLZStream(compressed, CompressionMode.Compress, level))
                 {
                     lz.Write(original, 0, original.Length);
                 }
@@ -30,7 +37,7 @@
             result = new byte[original.Length];
             using (var compressed = new MemoryStream(compressedBytes))
             {
-                using (var lzd = new QuickLZDecompressionStream(compressed))
+                using (var lzd = new QuickLZStream(compressed, CompressionMode.Decompress, level))
                 {
                     lzd.Read(result, 0, result.Length);
                 }
@@ -42,16 +49,22 @@
         }
 
         [Test]
-        public void ParallelTest1()
+        public void ParallelTests()
         {
-            var qlz = new QuickLZ();
+            RunParallelTest(1);
+            RunParallelTest(2);
+            RunParallelTest(3);
+        }
+
+        private static void RunParallelTest(int level)
+        {
             //create a stream and pass it through compress and decompress
             //assert it is unchanged//
             byte[] original = File.ReadAllBytes("./Flower.bmp");
             byte[] compressedBytes; // = new byte[sizeCompressed];
             using (var compressed = new MemoryStream())
             {
-                using (var lz = new QuickLZCompressionStream(compressed))
+                using (var lz = new QuickLZStream(compressed, CompressionMode.Compress, level))
                 {
                     lz.Write(original, 0, original.Length);
                 }
@@ -67,7 +80,7 @@
                     for (int k = 0; k < 100; k++)
                     {
                         using (var compressed = new MemoryStream(compressedBytes))
-                        using (var lzd = new QuickLZDecompressionStream(compressed))
+                        using (var lzd = new QuickLZStream(compressed, CompressionMode.Decompress, level))
                         {
                             lzd.Read(result, 0, result.Length);
                         }
